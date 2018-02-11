@@ -68,7 +68,7 @@ public class Point implements Comparable<Point> {
         if (x == that.x) {
             return Double.POSITIVE_INFINITY;
         }
-        return (that.y - y) / (that.x - x);
+        return 1.0 * (that.y - y) / (that.x - x);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public Comparator<Point> slopeOrder() {
+    public static Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
         return Point::compareTo;
     }
@@ -121,7 +121,5 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        final Point point = new Point(1, 2);
-        final Point point1 = new Point(3, 4);
     }
 }
