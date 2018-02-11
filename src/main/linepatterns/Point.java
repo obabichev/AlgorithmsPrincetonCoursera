@@ -99,9 +99,12 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public static Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
-        return Point::compareTo;
+    public Comparator<Point> slopeOrder() {
+        return (o1, o2) -> {
+            final double slope1 = Point.this.slopeTo(o1);
+            final double slope2 = Point.this.slopeTo(o2);
+            return Double.compare(slope1, slope2);
+        };
     }
 
 

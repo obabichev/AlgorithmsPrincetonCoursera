@@ -34,7 +34,7 @@ public class BruteCollinearPoints {
         if (p.slopeTo(q) == p.slopeTo(r)
                 && p.slopeTo(q) == p.slopeTo(s)) {
             final Point[] resultSet = {p, q, r, s};
-            Arrays.sort(resultSet, Point.slopeOrder());
+            Arrays.sort(resultSet);
 
             if (isFull()) {
                 resize();
