@@ -66,7 +66,11 @@ public class Board {
 
     public Board twin() {
         final Board result = new Board(this.board);
-        result.swap(0, 0, 0, 1);
+        if (result.board[0][0] == 0 || result.board[0][1] == 0) {
+            result.swap(1, 0, 1, 1);
+        } else {
+            result.swap(0, 0, 0, 1);
+        }
         return result;
     }
 
