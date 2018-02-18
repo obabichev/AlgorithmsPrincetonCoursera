@@ -7,6 +7,8 @@ public class Board {
 
     private final int[][] board;
     private final int N;
+    private final int hammingValue;
+    private final int manhettanValue;
 
     public Board(int[][] blocks) {
         N = blocks.length;
@@ -16,13 +18,15 @@ public class Board {
                 board[i][j] = blocks[i][j];
             }
         }
+        hammingValue = countHamming();
+        manhettanValue = countManhattan();
     }
 
     public int dimension() {
         return N;
     }
 
-    public int hamming() {
+    private int countHamming() {
         int result = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -37,7 +41,11 @@ public class Board {
         return result;
     }
 
-    public int manhattan() {
+    public int hamming() {
+        return hammingValue;
+    }
+
+    private int countManhattan() {
         int result = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -49,6 +57,10 @@ public class Board {
             }
         }
         return result;
+    }
+
+    public int manhattan() {
+        return manhettanValue;
     }
 
     public boolean isGoal() {

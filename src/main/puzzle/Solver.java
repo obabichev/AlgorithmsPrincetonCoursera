@@ -15,8 +15,8 @@ public class Solver {
     private int size = 0;
 
     public Solver(Board initial) {
-        queue = new MinPQ<>(Comparator.comparingInt(Board::hamming));
-        twinQueue = new MinPQ<>(Comparator.comparingInt(Board::hamming));
+        queue = new MinPQ<>(Comparator.comparingInt(Board::manhattan));
+        twinQueue = new MinPQ<>(Comparator.comparingInt(Board::manhattan));
 
         queue.insert(initial);
         twinQueue.insert(initial.twin());
@@ -26,6 +26,9 @@ public class Solver {
 
     private void solving() {
         Board min = queue.min();
+        if (min.isGoal()) {
+            add(min, null);
+        }
 
         while (!min.isGoal()) {
             min = queue.delMin();
@@ -40,8 +43,9 @@ public class Solver {
             add(min, twinMin);
 
             Iterable<Board> neighbors = min.neighbors();
+
             for (Board neighbor : neighbors) {
-                if (size > 1 && neighbor.equals(solution[size - 2])) {
+                if (isContain(solution, neighbor)) {
                     continue;
                 }
                 queue.insert(neighbor);
@@ -49,12 +53,21 @@ public class Solver {
 
             neighbors = twinMin.neighbors();
             for (Board neighbor : neighbors) {
-                if (size > 1 && neighbor.equals(twinSolution[size - 2])) {
+                if (isContain(twinSolution, neighbor)) {
                     continue;
                 }
                 twinQueue.insert(neighbor);
             }
         }
+    }
+
+    private boolean isContain(Board[] boards, Board board) {
+        for (int i = 0; i < size; i++) {
+            if (boards[i].equals(board)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void add(Board board, Board twinBoard) {
