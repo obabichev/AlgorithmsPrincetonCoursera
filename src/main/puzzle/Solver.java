@@ -19,50 +19,51 @@ public class Solver {
         }
     }
 
-    private TBoard[] tree = new TBoard[100];
-    private int size = 0;
     private TBoard finish = null;
 
     private MinPQ<TBoard> queue;
+    private MinPQ<TBoard> twinQueue;
 
 
     public Solver(Board initial) {
         queue = new MinPQ<>(Comparator.comparingInt(o -> o.board.manhattan() + o.moves));
+        twinQueue = new MinPQ<>(Comparator.comparingInt(o -> o.board.manhattan() + o.moves));
+
         final TBoard root = new TBoard(initial, null, 0);
+        final TBoard twinRoot = new TBoard(initial.twin(), null, 0);
+
         queue.insert(root);
-        addTreeItem(root);
+        twinQueue.insert(twinRoot);
 
         solve();
     }
 
     private void solve() {
-        TBoard min;
         while (!queue.isEmpty()) {
-            min = queue.delMin();
+            final TBoard min = addNeighbors(queue);
             if (min.board.isGoal()) {
                 finish = min;
                 return;
             }
-
-            final Iterable<Board> neighbors = min.board.neighbors();
-            for (Board neighbor : neighbors) {
-                if (min.parent != null && min.parent.board.equals(neighbor)) {
-                    continue;
-                }
-                final TBoard tBoard = new TBoard(neighbor, min, min.moves + 1);
-                queue.insert(tBoard);
-                addTreeItem(tBoard);
+            if (addNeighbors(twinQueue).board.isGoal()) {
+                return;
             }
-//            System.out.println("Moves: " + min.moves);
-//            System.out.println("Manhetten: " + min.board.manhattan());
-//            System.out.println("Priority: " + (min.moves + min.board.manhattan()));
-//            System.out.println(min.board);
-//            System.out.println();
         }
     }
 
-    private void addTreeItem(TBoard tBoard) {
-        tree[size++] = tBoard;
+    private TBoard addNeighbors(MinPQ<TBoard> queue) {
+        TBoard min = queue.delMin();
+
+        Iterable<Board> neighbors = min.board.neighbors();
+        for (Board neighbor : neighbors) {
+            if (min.parent != null && min.parent.board.equals(neighbor)) {
+                continue;
+            }
+            final TBoard tBoard = new TBoard(neighbor, min, min.moves + 1);
+            queue.insert(tBoard);
+        }
+
+        return min;
     }
 
     public boolean isSolvable() {
@@ -77,12 +78,7 @@ public class Solver {
     }
 
     public Iterable<Board> solution() {
-        return new Iterable<Board>() {
-            @Override
-            public Iterator<Board> iterator() {
-                return new SolutionIterator();
-            }
-        };
+        return SolutionIterator::new;
     }
 
     private class SolutionIterator implements Iterator<Board> {
