@@ -7,8 +7,8 @@ public class Board {
 
     private final int[][] board;
     private final int N;
-    private final int hammingValue;
-    private final int manhettanValue;
+    private int hammingValue;
+    private int manhettanValue;
 
     public Board(int[][] blocks) {
         N = blocks.length;
@@ -18,8 +18,7 @@ public class Board {
                 board[i][j] = blocks[i][j];
             }
         }
-        hammingValue = countHamming();
-        manhettanValue = countManhattan();
+        countConstants();
     }
 
     public int dimension() {
@@ -162,7 +161,13 @@ public class Board {
         int val = board[i0][j0];
         board[i0][j0] = board[i1][j1];
         board[i1][j1] = val;
+        countConstants();
         return this;
+    }
+
+    private void countConstants() {
+        hammingValue = countHamming();
+        manhettanValue = countManhattan();
     }
 
     public String toString() {
