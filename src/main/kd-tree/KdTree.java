@@ -126,10 +126,10 @@ public class KdTree {
         double maxValues = currentNode.isHorizontal ? rect.xmax() : rect.ymax();
         double minValues = currentNode.isHorizontal ? rect.xmin() : rect.ymin();
 
-        if (rect.contains(currentNode.point)){
+        if (rect.contains(currentNode.point)) {
             res.add(currentNode.point);
         }
-        if (maxValues >= nodeValues){
+        if (maxValues >= nodeValues) {
             goNextNodeForRange(currentNode.second, rect, res);
         }
         if (minValues <= nodeValues) {
@@ -154,31 +154,32 @@ public class KdTree {
         RectHV rectSecond;
         if (currentNode.isHorizontal) {
             rectFirst = new RectHV(rect.xmin(), rect.ymin(), currentNode.point.x(), rect.ymax());
-            rectSecond = new RectHV(currentMinNode.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
-        }else{
-            rectFirst = new RectHV(rect.xmin(), currentNode.point.y(), rect.xmax(), rect.ymax());
-            rectSecond = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), currentNode.point.y());
+
+            rectSecond = new RectHV(currentNode.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+        } else {
+            rectSecond = new RectHV(rect.xmin(), currentNode.point.y(), rect.xmax(), rect.ymax());
+            rectFirst = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), currentNode.point.y());
         }
-        if (currentNode.point.distanceTo(point) < currentMinNode.point.distanceTo(point)){
+        if (currentNode.point.distanceTo(point) < currentMinNode.point.distanceTo(point)) {
             currentMinNode = currentNode;
         }
-        if (currentMinNode.point.distanceTo(point) > rectFirst.distanceTo(point)){
+        if (currentMinNode.point.distanceTo(point) > rectFirst.distanceTo(point)) {
             currentMinNode = goNextNodeForNearest(currentNode.first, rectFirst, point, currentMinNode);
         }
-        if (currentMinNode.point.distanceTo(point) > rectSecond.distanceTo(point)){
+        if (currentMinNode.point.distanceTo(point) > rectSecond.distanceTo(point)) {
             currentMinNode = goNextNodeForNearest(currentNode.second, rectSecond, point, currentMinNode);
         }
-        return  currentMinNode;
+        return currentMinNode;
     }
 
     public Point2D nearest(Point2D p) {
-        if (p == null){
+        if (p == null) {
             throw new IllegalArgumentException();
         }
-        if (size == 0){
+        if (size == 0) {
             return null;
         }
-         return goNextNodeForNearest(root, new RectHV(0,0,1,1), p, root).point;
+        return goNextNodeForNearest(root, new RectHV(0, 0, 1, 1), p, root).point;
     }
 
     public static void main(String[] args) {
