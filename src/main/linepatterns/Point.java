@@ -3,7 +3,7 @@ import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
 /******************************************************************************
- *  Compilation:  javac Point.java
+ *  Compilation:  javac Point2D.java
  *  Execution:    java Point
  *  Dependencies: none
  *

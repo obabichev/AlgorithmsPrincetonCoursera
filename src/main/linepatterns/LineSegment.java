@@ -1,7 +1,7 @@
 /*************************************************************************
  *  Compilation:  javac LineSegment.java
  *  Execution:    none
- *  Dependencies: Point.java
+ *  Dependencies: Point2D.java
  *
  *  An immutable data type for Line segments in the plane.
  *  For use on Coursera, Algorithms Part I programming assignment.
