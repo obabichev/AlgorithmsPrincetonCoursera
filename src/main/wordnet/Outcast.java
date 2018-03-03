@@ -2,10 +2,16 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Outcast {
+    private WordNet wordNet;
+    
     public Outcast(WordNet wordnet) {
+        this.wordNet = wordnet;
     }
 
     public String outcast(String[] nouns) {
+        for (String s : wordNet.nouns()) {
+            
+        }
         return null;
     }
 
