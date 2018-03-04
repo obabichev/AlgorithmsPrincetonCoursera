@@ -1,9 +1,8 @@
-import com.sun.org.apache.xerces.internal.impl.xs.util.StringListImpl;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.MaxPQ;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WordNet {
 

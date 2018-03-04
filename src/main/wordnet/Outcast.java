@@ -3,16 +3,32 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Outcast {
     private WordNet wordNet;
-    
+
     public Outcast(WordNet wordnet) {
         this.wordNet = wordnet;
     }
 
     public String outcast(String[] nouns) {
-        for (String s : wordNet.nouns()) {
-            
+        if (nouns == null || nouns.length == 0) {
+            throw new IllegalArgumentException();
         }
-        return null;
+        int maxD = 0;
+        String goodNoun = null;
+        for (String noun : nouns) {
+            int d = 0;
+            for (String nounOther : nouns) {
+                d += wordNet.distance(noun, nounOther);
+            }
+            System.out.println("---------------");
+            System.out.println(d);
+            System.out.println(noun);
+            if (d >= maxD) {
+
+                maxD = d;
+                goodNoun = noun;
+            }
+        }
+        return goodNoun;
     }
 
     public static void main(String[] args) {
