@@ -2,7 +2,6 @@ import edu.princeton.cs.algs4.Picture;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SeamCarver {
@@ -11,9 +10,69 @@ public class SeamCarver {
     private double[][] weights;
 
     public SeamCarver(Picture picture) {
+        checkNull(picture);
+
         this.picture = picture;
 
         fillEnergy();
+    }
+
+    private void checkX(int x) {
+        if (x < 0 || x >= width()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkY(int y) {
+        if (y < 0 || y >= height()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkNull(Object arg) {
+        if (arg == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkVerticalSeam(int[] seam) {
+        checkNull(seam);
+
+        if (width() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        if (seam.length != height()) {
+            throw new IllegalArgumentException();
+        }
+
+        checkX(seam[0]);
+        for (int i = 1; i < seam.length; i++) {
+            checkX(seam[i]);
+            if (Math.abs(seam[i] - seam[i - 1]) > 1) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    private void checkHorizontalSeam(int[] seam) {
+        checkNull(seam);
+
+        if (height() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        if (seam.length != width()) {
+            throw new IllegalArgumentException();
+        }
+
+        checkY(seam[0]);
+        for (int i = 1; i < seam.length; i++) {
+            checkY(seam[i]);
+            if (Math.abs(seam[i] - seam[i - 1]) > 1) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     private void fillEnergy() {
@@ -60,6 +119,9 @@ public class SeamCarver {
     }
 
     public double energy(int x, int y) {
+        checkX(x);
+        checkY(y);
+
         return weights[x][y];
     }
 
@@ -222,10 +284,6 @@ public class SeamCarver {
         return result;
     }
 
-    private int begin() {
-        return 0;
-    }
-
     private int end() {
         return width() * height() + 1;
     }
@@ -239,6 +297,8 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
+        checkHorizontalSeam(seam);
+
         final Picture newPicture = new Picture(width(), height() - 1);
 
         for (int j = 0; j < width(); j++) {
@@ -253,6 +313,8 @@ public class SeamCarver {
     }
 
     public void removeVerticalSeam(int[] seam) {
+        checkVerticalSeam(seam);
+
         final Picture newPicture = new Picture(width() - 1, height());
 
         for (int i = 0; i < height(); i++) {
