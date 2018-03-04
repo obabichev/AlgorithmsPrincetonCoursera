@@ -64,7 +64,38 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() {
-        return null;
+        int[] seam = new int[width()];
+
+        double[] distTo = new double[size() + 2];
+        int[] vertexTo = new int[size() + 2];
+
+        for (int i = 0; i < size() + 2; i++) {
+            distTo[i] = -1;
+            vertexTo[i] = -1;
+        }
+
+        deikstra(0, 0, -1, distTo, vertexTo);
+
+        for (int index = 0; index <= size(); index++) {
+            double weight = distTo[index];
+            for (Integer neighbor : horizontalNeighboars(index)) {
+                int[] point = indexToPoint(neighbor);
+                double nextWeight = neighbor == end() ? weight : weight + energy(point[0], point[1]);
+                deikstra(neighbor, nextWeight, index, distTo, vertexTo);
+            }
+        }
+
+        int last = vertexTo.length - 1;
+        int[] point = null;
+        do {
+            last = vertexTo[last];
+
+            point = indexToPoint(last);
+            seam[point[0]] = point[1];
+//            System.out.println(String.format("[%d](%d, %d)", last, point[0], point[1]));
+        } while (point[0] != 0);
+
+        return seam;
     }
 
     public int[] findVerticalSeam() {
@@ -78,20 +109,20 @@ public class SeamCarver {
             vertexTo[i] = -1;
         }
 
-        verticalDeikstra(0, 0, -1, distTo, vertexTo);
+        deikstra(0, 0, -1, distTo, vertexTo);
 
         for (int index = 0; index <= size(); index++) {
             double weight = distTo[index];
             for (Integer neighbor : verticalNeighboars(index)) {
                 int[] point = indexToPoint(neighbor);
                 double nextWeight = neighbor == end() ? weight : weight + energy(point[0], point[1]);
-                verticalDeikstra(neighbor, nextWeight, index, distTo, vertexTo);
+                deikstra(neighbor, nextWeight, index, distTo, vertexTo);
             }
         }
 
 
 //        printDistTo(distTo);
-        System.out.println(Arrays.toString(vertexTo));
+//        System.out.println(Arrays.toString(vertexTo));
 
         int last = vertexTo.length - 1;
         int[] point = null;
@@ -118,17 +149,13 @@ public class SeamCarver {
         System.out.println("end: " + distTo[size() + 1]);
     }
 
-    private void verticalDeikstra(int index, double weight, int parent, double[] distTo, int[] vertexTo) {
+    private void deikstra(int index, double weight, int parent, double[] distTo, int[] vertexTo) {
         if (distTo[index] != -1 && distTo[index] <= weight) {
             return;
         }
 
         distTo[index] = weight;
         vertexTo[index] = parent;
-
-        if (index == end()) {
-            return;
-        }
     }
 
     private int[] indexToPoint(int index) {
@@ -167,6 +194,34 @@ public class SeamCarver {
         return result;
     }
 
+    private List<Integer> horizontalNeighboars(int index) {
+        final ArrayList<Integer> result = new ArrayList<>();
+        if (index == 0) {
+            for (int i = 0; i < height(); i++) {
+                result.add(pointToIntex(0, i));
+            }
+            return result;
+        }
+
+        int x = (index - 1) % width();
+        int y = (index - 1) / width();
+
+        if (x == width() - 1) {
+            result.add(end());
+            return result;
+        }
+
+        if (y - 1 >= 0) {
+            result.add(pointToIntex(x + 1, y - 1));
+        }
+        if (y + 1 < height()) {
+            result.add(pointToIntex(x + 1, y + 1));
+        }
+        result.add(pointToIntex(x + 1, y));
+
+        return result;
+    }
+
     private int begin() {
         return 0;
     }
@@ -184,6 +239,17 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
+        final Picture newPicture = new Picture(width(), height() - 1);
+
+        for (int j = 0; j < width(); j++) {
+            int delRow = seam[j];
+            for (int i = 0; i < height() - 1; i++) {
+                newPicture.set(j, i, this.picture.get(j, i < delRow ? i : i + 1));
+            }
+        }
+
+        this.picture = newPicture;
+        fillEnergy();
     }
 
     public void removeVerticalSeam(int[] seam) {
@@ -206,9 +272,8 @@ public class SeamCarver {
         final SeamCarver seamCarver = new SeamCarver(picture);
 
         for (int i = 0; i < 100; i++) {
-            System.out.println("====================================================");
-            System.out.println("remove step: " + i);
-            seamCarver.removeVerticalSeam(seamCarver.findVerticalSeam());
+//            seamCarver.removeVerticalSeam(seamCarver.findVerticalSeam());
+            seamCarver.removeHorizontalSeam(seamCarver.findHorizontalSeam());
         }
 
         seamCarver.picture().show();
